@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уровень комфорта городской среды Королёва</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Общие стили */
+        :root {
+            --primary: #1a3a5f;
+            --secondary: #4a9de3;
+            --accent: #ff6b6b;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --text: #333;
+            --text-light: #7f8c8d;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        .dark-mode {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --light: #1a2530;
+            --dark: #ecf0f1;
+            --text: #ecf0f1;
+            --text-light: #bdc3c7;
+            --shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        section {
+            padding: 100px 0;
+        }
+        
+        h1, h2, h3, h4 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            line-height: 1.2;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+        
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--gradient);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover:before {
+            left: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+        }
+        
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent), #ff8e8e);
+        }
+        
+        .btn-accent:hover {
+            background: linear-gradient(135deg, #e74c3c, var(--accent));
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        
+        .section-header h2:after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* Шапка */
+        header {
+            background: var(--gradient);
+            color: white;
+            padding: 150px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+        
+        header:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,192C1248,192,1344,128,1392,96L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo i {
+            font-size: 4rem;
+            margin-right: 20px;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .header-content h1 {
+            color: white;
+            margin-bottom: 25px;
+            font-size: 4rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .header-content p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.4rem;
+            margin-bottom: 40px;
+        }
+        
+        /* Навигация */
+        nav {
+            background-color: rgba(26, 58, 95, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: var(--transition);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo-small {
+            display: flex;
+            align-items: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        
+        .logo-small i {
+            margin-right: 10px;
+            font-size: 1.7rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav li {
+            margin: 0 8px;
+        }
+        
+        nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            transition: var(--transition);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        nav a:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        nav a:hover:before, nav a.active:before {
+            left: 0;
+        }
+        
+        nav a:hover, nav a.active {
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .theme-toggle:hover {
+            background-color: rgba(255,255,255,0.1);
+            transform: rotate(30deg);
+        }
+        
+        .mobile-menu {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.7rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+        
+        .mobile-menu:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        /* Основной контент */
+        .intro {
+            background-color: white;
+            padding: 120px 0;
+        }
+        
+        .intro-content {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+        
+        .intro-text {
+            flex: 1;
+        }
+        
+        .intro-visual {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .city-stats {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        .stat {
+            flex: 1;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .stat:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .stat i {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        .stat h3 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .stat p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+        
+        .city-image {
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .city-image:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        
+        .city-image img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+        
+        .city-image:hover img {
+            transform: scale(1.1);
+        }
+        
+        /* Карточки с оценками */
+        .criteria-section {
+            background-color: var(--light);
+        }
+        
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 40px;
+        }
+        
+        .criteria-card {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 40px 30px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .criteria-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        
+        .criteria-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+        }
+        
+        .criteria-icon {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 25px;
+        }
+        
+        .criteria-card h3 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .rating {
+            font-weight: bold;
+            font-size: 1.3rem;
+            padding: 8px 20px;
+            border-radius: 50px;
+            background: var(--light);
+        }
+        
+        .good {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+        
+        .average {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+        
+        .poor {
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--accent);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 1.5s ease;
+        }
+        
+        .progress-good {
+            background: var(--success);
+        }
+        
+        .progress-average {
+            background: var(--warning);
+        }
+        
+        .progress-poor {
+            background: var(--accent);
+        }
+        
+        /* Диаграмма */
+        .analysis {
+            background-color: white;
+        }
+        
+        .chart-container {
+            background-color: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            margin-top: 50px;
+        }
+        
+        .chart-wrapper {
+            height: 450px;
+            margin-top: 40px;
+        }
+        
+        .conclusion {
+            background: var(--light);
+            padding: 40px;
+            border-radius: 20px;
+            margin-top: 50px;
+            border-left: 8px solid var(--secondary);
+            transition: var(--transition);
+        }
+        
+        .conclusion:hover {
+            transform: translateX(10px);
+            box-shadow: var(--shadow);
+        }
+        
+        /* Карта */
+        .map-section {
+            background-color: var(--light);
+        }
+        
+        .map-container {
+            height: 600px;
+            border-radius: 20px;
+            margin-top: 40px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+        
+        #yandex-map {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .map-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 58, 95, 0.9);
+            color: white;
+            padding: 25px;
+            transform: translateY(100%);
+            transition: var(--transition);
+        }
+        
+        .map-container:hover .map-overlay {
+            transform: translateY(0);
+        }
+        
+        .map-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .legend-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .legend-color {
+            width: 25px;
+            height: 25px;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+        
+        /* Районы */
+        .districts {
+            background-color: white;
+        }
+        
+        .district-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+            justify-content: center;
+        }
+        
+        .district-tab {
+            padding: 15px 30px;
+            background: var(--light);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .district-tab:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .district-tab.active {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 10px 20px rgba(74, 157, 227, 0.3);
+        }
+        
+        .district-content {
+            display: none;
+        }
+        
+        .district-content.active {
+            display: block;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .district-info {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .district-image {
+            flex: 1;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .district-image:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        
+        .district-image img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+        }
+        
+        .district-details {
+            flex: 1;
+        }
+        
+        .district-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .district-stat {
+            background: var(--light);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .district-stat:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .district-stat i {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        
+        /* Опрос */
+        .survey-section {
+            background-color: var(--light);
+        }
+        
+        .survey-container {
+            background-color: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .question {
+            margin-bottom: 50px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .question:last-child {
+            border-bottom: none;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .option {
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            border: 2px solid transparent;
+            font-weight: 500;
+        }
+        
+        .option:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-5px);
+        }
+        
+        .option.selected {
+            background: var(--gradient);
+            color: white;
+            border-color: var(--secondary);
+            box-shadow: 0 10px 20px rgba(74, 157, 227, 0.3);
+        }
+        
+        .survey-progress {
+            height: 12px;
+            background: #ecf0f1;
+            border-radius: 6px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+        
+        .survey-progress-bar {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 6px;
+            width: 0%;
+            transition: width 0.8s ease;
+        }
+        
+        .survey-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        
+        /* Предложения */
+        .suggestions {
+            background-color: white;
+        }
+        
+        .suggestions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 40px;
+        }
+        
+        .suggestion-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .suggestion-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        
+        .suggestion-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+        }
+        
+        .suggestion-icon {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 25px;
+        }
+        
+        .suggestion-card h3 {
+            margin-bottom: 20px;
+        }
+        
+        /* Подвал */
+        footer {
+            background: var(--gradient);
+            color: white;
+            padding: 80px 0 40px;
+            clip-path: polygon(0 10%, 100% 0, 100% 100%, 0 100%);
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 50px;
+        }
+        
+        .footer-column h3 {
+            color: white;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: rgba(255,255,255,0.5);
+        }
+        
+        .footer-column p, .footer-column a {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 15px;
+            display: block;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-column a:hover {
+            color: white;
+            padding-left: 10px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .social-links a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+            font-size: 0.95rem;
+        }
+        
+        /* Анимации при прокрутке */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 1200px) {
+            .intro-content, .district-info {
+                flex-direction: column;
+            }
+            
+            .district-image, .district-details {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .nav-container ul {
+                display: none;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .mobile-nav {
+                position: fixed;
+                top: 0;
+                right: -300px;
+                width: 300px;
+                height: 100vh;
+                background: var(--primary);
+                z-index: 1001;
+                padding: 100px 30px 30px;
+                transition: var(--transition);
+                box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            }
+            
+            .mobile-nav.active {
+                right: 0;
+            }
+            
+            .mobile-nav ul {
+                flex-direction: column;
+            }
+            
+            .mobile-nav li {
+                margin: 10px 0;
+            }
+            
+            .mobile-nav a {
+                display: block;
+                padding: 15px;
+                border-radius: 8px;
+                text-align: center;
+            }
+            
+            .close-menu {
+                position: absolute;
+                top: 30px;
+                right: 30px;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.8rem;
+                cursor: pointer;
+            }
+            
+            h1 {
+                font-size: 2.8rem;
+            }
+            
+            h2 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            section {
+                padding: 80px 0;
+            }
+            
+            .city-stats {
+                flex-direction: column;
+                gap: 25px;
+            }
+            
+            .criteria-grid, .suggestions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .district-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container, .survey-container {
+                padding: 30px 20px;
+            }
+            
+            .header-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header-content p {
+                font-size: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+            }
+            
+            .stat {
+                padding: 20px;
+            }
+            
+            .stat h3 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h1>Уровень комфорта городской среды Королёва</h1>
+                <p>Комплексное исследование качества жизни в наукограде - космической столице России</p>
+                <a href="#criteria" class="btn">Исследовать показатели</a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Навигация -->
+    <nav>
+        <div class="container nav-container">
+            <div class="logo-small">
+                <i class="fas fa-city"></i>
+                <span>Королёв</span>
+            </div>
+            <ul>
+                <li><a href="#intro" class="active">О проекте</a></li>
+                <li><a href="#criteria">Критерии</a></li>
+                <li><a href="#analysis">Анализ</a></li>
+                <li><a href="#districts">Районы</a></li>
+                <li><a href="#map">Карта</a></li>
+                <li><a href="#survey">Опрос</a></li>
+                <li><a href="#suggestions">Предложения</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="mobile-menu" id="mobileMenu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Мобильное меню -->
+    <div class="mobile-nav" id="mobileNav">
+        <button class="close-menu" id="closeMenu">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul>
+            <li><a href="#intro">О проекте</a></li>
+            <li><a href="#criteria">Критерии</a></li>
+            <li><a href="#analysis">Анализ</a></li>
+            <li><a href="#districts">Районы</a></li>
+            <li><a href="#map">Карта</a></li>
+            <li><a href="#survey">Опрос</a></li>
+            <li><a href="#suggestions">Предложения</a></li>
+        </ul>
+    </div>
+    
+    <!-- Основной контент -->
+    <main>
+        <!-- Введение -->
+        <section id="intro" class="intro">
+            <div class="container">
+                <div class="intro-content fade-in">
+                    <div class="intro-text">
+                        <h2>Королёв - город с особой миссией</h2>
+                        <p>Королёв — один из крупнейших научно-производственных центров России, известный как "космическая столица" страны. Город обладает уникальным сочетанием научного потенциала, богатой истории и развитой инфраструктуры.</p>
+                        <p>В этом проекте мы провели комплексную оценку уровня комфорта городской среды по различным критериям, чтобы выявить сильные и слабые стороны города и предложить пути улучшения качества жизни горожан.</p>
+                        <a href="#analysis" class="btn">Смотреть результаты</a>
+                    </div>
+                    <div class="intro-visual">
+                        <div class="city-image">
+                            <div style="height: 350px; background: linear-gradient(135deg, #4a9de3, #1a3a5f); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; border-radius: 20px;">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-city" style="font-size: 5rem; margin-bottom: 20px;"></i>
+                                    <p>Город Королёв</p>
+                                    <p style="font-size: 1rem; margin-top: 10px;">Космическая столица России</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="city-stats">
+                            <div class="stat">
+                                <i class="fas fa-users"></i>
+                                <h3>225 тыс.</h3>
+                                <p>Население</p>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-tree"></i>
+                                <h3>48%</h3>
+                                <p>Озеленение</p>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-graduation-cap"></i>
+                                <h3>32</h3>
+                                <p>Школы</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Критерии оценки -->
+        <section id="criteria" class="criteria-section">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2>Критерии оценки комфорта</h2>
+                    <p>Мы оценили городскую среду Королёва по 7 ключевым критериям, каждый из которых влияет на качество жизни горожан.</p>
+                </div>
+                
+                <div class="criteria-grid">
+                    <div class="criteria-card fade-in">
+                        <div class="criteria-icon">
+                            <i class="fas fa-bus"></i>
+                        </div>
+                        <h3>Транспортная инфраструктура <span class="rating average">6/10</span></h3>
+                        <p>Оценка дорожной сети, общественного транспорта, доступности и загруженности.</p>
+                        <div class="progress-bar">
+                            <div class="progress progress-average" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="criteria-card fade-in">
+                        <div class="criteria-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h3>Экология и озеленение <span class="rating good">8/10</span></h3>
+                        <p>Качество воздуха, количество зеленых зон, парков и скверов.</p>
+                        <div class="progress-bar">
+                            <div class="progress progress-good" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="criteria-card fade-in">
+                        <div class="criteria-icon">
+                            <i class="fas fa-school"></i>
+                        </div>
+                        <h3>Социальная инфраструктура <span class="rating good">7/10</span></h3>
+                        <p>Доступность школ, детских садов, поликлиник и других социальных объектов.</p>
+                        <div class="progress-bar">
+                            <div class="progress progress-good" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="criteria-card fade-in">
+                        <div class="criteria-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Безопасность <span class="rating average">6/10</span></h3>
+                        <p>Уровень преступности, освещенность улиц, наличие камер наблюдения.</p>
+                        <div class="progress-bar">
+                            <div class="progress progress-average" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="criteria-card fade-in">
+                        <div class="criteria-icon">
+                            <i class="fas fa-theater-masks"></i>
+                        </div>
+                        <h3>Культура и досуг <span class="rating good">8/10</span></h3>
+                        <p>Театры, музеи, кинотеатры, парки развлечений и другие места для отдыха.</p>
+                        <div class="progress-bar">
+                            <div class="progress progress-good" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="criteria-card fade-in">
+                        <div class="criteria-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h3>Торговая инфраструктура <span class="rating good">9/10</span></h3>
+                        <p>Доступность магазинов, торговых центров, рынков и услуг.</p>
+                        <div class="progress-bar">
+                            <div class="progress progress-good" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="criteria-card fade-in">
+                        <div class="criteria-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <h3>Благоустройство <span class="rating poor">5/10</span></h3>
+                        <p>Состояние дворов, тротуаров, детских и спортивных площадок.</p>
+                        <div class="progress-bar">
+                            <div class="progress progress-poor" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Анализ и диаграмма -->
+        <section id="analysis" class="analysis">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2>Анализ уровня комфорта</h2>
+                    <p>На основе проведенного исследования мы составили общую оценку комфорта городской среды Королёва.</p>
+                </div>
+                
+                <div class="chart-container fade-in">
+                    <h3>Оценка по критериям (в баллах)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="comfortChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="conclusion fade-in">
+                    <h3>Выводы исследования</h3>
+                    <p>Город Королёв демонстрирует высокий уровень комфорта по таким критериям как торговая инфраструктура, культура и досуг, экология. В то же время есть проблемы с транспортной ситуацией и благоустройством некоторых районов.</p>
+                    <p>Общая оценка комфорта городской среды Королёва: <strong>7/10</strong></p>
+                    <p>Город имеет значительный потенциал для улучшения качества городской среды, особенно в сфере транспорта и благоустройства общественных пространств.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Районы города -->
+        <section id="districts" class="districts">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2>Районы города</h2>
+                    <p>Уровень комфорта может значительно различаться в разных районах Королёва.</p>
+                </div>
+                
+                <div class="district-tabs fade-in">
+                    <button class="district-tab active" data-district="center">Центр</button>
+                    <button class="district-tab" data-district="yubileyny">Юбилейный</button>
+                    <button class="district-tab" data-district="podlipki">Подлипки</button>
+                    <button class="district-tab" data-district="bolshevo">Болшево</button>
+                </div>
+                
+                <div class="district-content active fade-in" id="center">
+                    <div class="district-info">
+                        <div class="district-image">
+                            <div style="height: 350px; background: linear-gradient(135deg, #4a9de3, #1a3a5f); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; border-radius: 20px;">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-building" style="font-size: 5rem; margin-bottom: 20px;"></i>
+                                    <p>Центральный район</p>
+                                    <p style="font-size: 1rem; margin-top: 10px;">Исторический центр города</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="district-details">
+                            <h3>Центральный район</h3>
+                            <p>Исторический и административный центр города с развитой инфраструктурой, но высокой транспортной нагрузкой.</p>
+                            <div class="district-stats">
+                                <div class="district-stat">
+                                    <i class="fas fa-star"></i>
+                                    <h4>7.5/10</h4>
+                                    <p>Общий рейтинг</p>
+                                </div>
+                                <div class="district-stat">
+                                    <i class="fas fa-bus"></i>
+                                    <h4>6/10</h4>
+                                    <p>Транспорт</p>
+                                </div>
+                                <div class="district-stat">
+                                    <i class="fas fa-tree"></i>
+                                    <h4>7/10</h4>
+                                    <p>Экология</p>
+                                </div>
+                                <div class="district-stat">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <h4>8/10</h4>
+                                    <p>Безопасность</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="district-content fade-in" id="yubileyny">
+                    <div class="district-info">
+                        <div class="district-image">
+                            <div style="height: 350px; background: linear-gradient(135deg, #2ecc71, #1a3a5f); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; border-radius: 20px;">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-home" style="font-size: 5rem; margin-bottom: 20px;"></i>
+                                    <p>Юбилейный район</p>
+                                    <p style="font-size: 1rem; margin-top: 10px;">Современный жилый район</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="district-details">
+                            <h3>Юбилейный</h3>
+                            <p>Современный район с хорошей планировкой и развитой социальной инфраструктурой.</p>
+                            <div class="district-stats">
+                                <div class="district-stat">
+                                    <i class="fas fa-star"></i>
+                                    <h4>8/10</h4>
+                                    <p>Общий рейтинг</p>
+                                </div>
+                                <div class="district-stat">
+                                    <i class="fas fa-bus"></i>
+                                    <h4>7/10</h4>
+                                    <p>Транспорт</p>
+                                </div>
+                                <div class="district-stat">
+                                    <i class="fas fa-tree"></i>
+                                    <h4>8/10</h4>
+                                    <p>Экология</p>
+                                </div>
+                                <div class="district-stat">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <h4>7/10</h4>
+                                    <p>Безопасность</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="district-content fade-in" id="podlipki">
+                    <div class="district-info">
+                        <div class="district-image">
+                            <div style="height: 350px; background: linear-gradient(135deg, #f39c12, #1a3a5f); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; border-radius: 20px;">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-industry" style="font-size: 5rem; margin-bottom: 20px;"></i>
+                                    <p>Подлипки</p>
+                                    <p style="font-size: 1rem; margin-top: 10px;">Промышленный район</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="district-details">
+                            <h3>Подлипки</h3>
+                            <p>Исторический район с промышленными предприятиями и развитой транспортной инфраструктурой.</p>
+                            <div class="district-stats">
+                                <div class="district-stat">
+                                    <i class="fas fa-star"></i>
+                                    <h4>6.5/10</h4>
+                                    <p>Общий рейтинг</p>
+                                </div>
+                                <div class="district-stat">
+                                    <i class="fas fa-bus"></i>
+                                    <h4>8/10</h4>
+                                    <p>Транспорт</p>
+                                </div>
+                                <div class="district-stat">
+                                    <i class="fas fa-tree"></i>
+                                    <h4>5/10</h4>
+                                    <p>Экология</p>
+                                </div>
+                                <div class="district-stat">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <h4>6/10</h4>
+                                    <p>Безопасность</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="district-content fade-in" id="bolshevo">
+                    <div class="district-info">
+                        <div class="district-image">
+                            <div style="height: 350px; background: linear-gradient(135deg, #ff6b6b, #1a3a5f); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; border-radius: 20px;">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-subway" style="font-size: 5rem; margin-bottom: 20px;"></i>
+                                    <p>Болшево</p>
+                                    <p style="font-size: 1rem; margin-top: 10px;">Спальный район</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="district-details">
+                            <h3>Болшево</h3>
+                            <p>Спальный район с хорошей экологией, но недостаточно развитой инфраструктурой.</p>
+                            <div class="district-stats">
+                                <div class="district-stat">
+                                    <i class="fas fa-star"></i>
+                                    <h4>6/10</h4>
+                                    <p>Общий рейтинг</p>
+                                </div>
+                                <div class="district-stat">
+                                    <i class="fas fa-bus"></i>
+                                    <h4>5/10</h4>
+                                    <p>Транспорт</p>
+                                </div>
+                                <div class="district-stat">
+                                    <i class="fas fa-tree"></i>
+                                    <h4>9/10</h4>
+                                    <p>Экология</p>
+                                </div>
+                                <div class="district-stat">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <h4>7/10</h4>
+                                    <p>Безопасность</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Карта города -->
+        <section id="map" class="map-section">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2>Интерактивная карта Королёва</h2>
+                    <p>Изучите городскую среду с помощью интерактивной 3D карты.</p>
+                </div>
+                
+                <div class="map-container fade-in">
+                    <div id="yandex-map" style="width: 100%; height: 100%;"></div>
+                    <div class="map-overlay">
+                        <h3>Карта Королёва</h3>
+                        <p>Используйте колесико мыши для приближения и элементы управления для навигации по карте.</p>
+                    </div>
+                </div>
+                
+                <div class="map-legend fade-in">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #2ecc71;"></div>
+                        <span>Высокий уровень комфорта</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f39c12;"></div>
+                        <span>Средний уровень комфорта</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ff6b6b;"></div>
+                        <span>Низкий уровень комфорта</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Опрос -->
+        <section id="survey" class="survey-section">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2>Оцените комфорт городской среды</h2>
+                    <p>Помогите нам улучшить исследование, приняв участие в опросе.</p>
+                </div>
+                
+                <div class="survey-container fade-in">
+                    <div class="survey-progress">
+                        <div class="survey-progress-bar" id="surveyProgress"></div>
+                    </div>
+                    
+                    <div class="question active" id="question1">
+                        <h3>1. Как вы оцениваете транспортную доступность в вашем районе?</h3>
+                        <div class="options">
+                            <div class="option">Отлично</div>
+                            <div class="option">Хорошо</div>
+                            <div class="option">Удовлетворительно</div>
+                            <div class="option">Плохо</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" id="question2">
+                        <h3>2. Насколько вас устраивает экологическая обстановка в городе?</h3>
+                        <div class="options">
+                            <div class="option">Полностью устраивает</div>
+                            <div class="option">В основном устраивает</div>
+                            <div class="option">Частично устраивает</div>
+                            <div class="option">Не устраивает</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" id="question3">
+                        <h3>3. Как вы оцениваете благоустройство дворов и общественных пространств?</h3>
+                        <div class="options">
+                            <div class="option">Высоко</div>
+                            <div class="option">Средне</div>
+                            <div class="option">Низко</div>
+                        </div>
+                    </div>
+                    
+                    <div class="survey-nav">
+                        <button class="btn" id="prevQuestion">Назад</button>
+                        <button class="btn" id="nextQuestion">Далее</button>
+                        <button class="btn btn-accent" id="submitSurvey" style="display: none;">Отправить ответы</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Предложения -->
+        <section id="suggestions" class="suggestions">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2>Предложения по улучшению</h2>
+                    <p>На основе исследования мы разработали рекомендации по повышению комфорта городской среды.</p>
+                </div>
+                
+                <div class="suggestions-grid">
+                    <div class="suggestion-card fade-in">
+                        <div class="suggestion-icon">
+                            <i class="fas fa-traffic-light"></i>
+                        </div>
+                        <h3>Оптимизация транспортной системы</h3>
+                        <p>Развитие велоинфраструктуры, оптимизация маршрутов общественного транспорта, создание перехватывающих парковок.</p>
+                    </div>
+                    
+                    <div class="suggestion-card fade-in">
+                        <div class="suggestion-icon">
+                            <i class="fas fa-park"></i>
+                        </div>
+                        <h3>Развитие общественных пространств</h3>
+                        <p>Благоустройство дворовых территорий, создание новых парков и скверов, модернизация существующих зон отдыха.</p>
+                    </div>
+                    
+                    <div class="suggestion-card fade-in">
+                        <div class="suggestion-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3>Умное городское освещение</h3>
+                        <p>Внедрение энергоэффективных систем освещения с датчиками движения для повышения безопасности и экономии ресурсов.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Подвал -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>О проекте</h3>
+                    <p>Исследование уровня комфорта городской среды Королёва проводилось в рамках школьного проекта с целью оценки качества жизни в городе.</p>
+                    <div class="social-links">
+                        <a href="https://vk.com/v_koroleve"><i class="fab fa-vk"></i></a>
+                        <a href="https://t.me/+YewTy3JG51xlM2Vi"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Разделы</h3>
+                    <a href="#intro">О проекте</a>
+                    <a href="#criteria">Критерии оценки</a>
+                    <a href="#analysis">Анализ данных</a>
+                    <a href="#districts">Районы города</a>
+                    <a href="#map">Карта</a>
+                    <a href="#survey">Опрос</a>
+                    <a href="#suggestions">Предложения</a>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <p><i class="fas fa-map-marker-alt"></i>Московская область, г. Королёв, ул.Октябрьский бульвар, д.33</p>
+                    <p><i class="fas fa-envelope"></i> example@school.ru</p>
+                    <p><i class="fas fa-phone"></i> +7 (963) 647-35-23</p>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2025 Школьный проект Щёкиной Веры Антоновны "Уровень комфорта городской среды города Королёв". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Подключаем API Яндекс Карт -->
+    <!-- ЗАМЕНИТЕ "ВАШ_API_КЛЮЧ" на ваш реальный ключ от Яндекс.Карт -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=92cceedf-9027-4cf1-a2ff-4024cb69d826&lang=ru_RU" type="text/javascript"></script>
+    
+    <script>
+        // Инициализация Яндекс Карт
+        ymaps.ready(init);
+        
+        function init() {
+            // Создаем карту
+            var myMap = new ymaps.Map("yandex-map", {
+                center: [55.922, 37.854], // Координаты Королёва
+                zoom: 12,
+                controls: ['zoomControl', 'fullscreenControl', 'typeSelector']
+            });
+            
+            // Включаем 3D-режим
+            myMap.options.set('projection', ymaps.projection.sphericalMercator);
+            
+            // Добавляем метки районов
+            var centerMarker = new ymaps.Placemark([55.922, 37.854], {
+                balloonContent: 'Центральный район - административный и исторический центр города'
+            }, {
+                preset: 'islands#blueIcon'
+            });
+            
+            var yubileynyMarker = new ymaps.Placemark([55.935, 37.845], {
+                balloonContent: 'Юбилейный - современный жилой район с развитой инфраструктурой'
+            }, {
+                preset: 'islands#greenIcon'
+            });
+            
+            var podlipkiMarker = new ymaps.Placemark([55.909, 37.831], {
+                balloonContent: 'Подлипки - промышленный район с исторической застройкой'
+            }, {
+                preset: 'islands#orangeIcon'
+            });
+            
+            var bolshevoMarker = new ymaps.Placemark([55.939, 37.871], {
+                balloonContent: 'Болшево - спальный район с хорошей экологией'
+            }, {
+                preset: 'islands#redIcon'
+            });
+            
+            // Добавляем метки на карту
+            myMap.geoObjects.add(centerMarker);
+            myMap.geoObjects.add(yubileynyMarker);
+            myMap.geoObjects.add(podlipkiMarker);
+            myMap.geoObjects.add(bolshevoMarker);
+            
+            // Добавляем зоны комфорта (примерные полигоны)
+            var centerPolygon = new ymaps.Polygon([
+                [
+                    [55.917, 37.840],
+                    [55.927, 37.840],
+                    [55.927, 37.870],
+                    [55.917, 37.870]
+                ]
+            ], {
+                hintContent: "Центральный район - средний уровень комфорта"
+            }, {
+                fillColor: '#f39c12',
+                strokeColor: '#f39c12',
+                opacity: 0.5,
+                strokeWidth: 2
+            });
+            
+            var yubileynyPolygon = new ymaps.Polygon([
+                [
+                    [55.930, 37.835],
+                    [55.940, 37.835],
+                    [55.940, 37.855],
+                    [55.930, 37.855]
+                ]
+            ], {
+                hintContent: "Юбилейный район - высокий уровень комфорта"
+            }, {
+                fillColor: '#2ecc71',
+                strokeColor: '#2ecc71',
+                opacity: 0.5,
+                strokeWidth: 2
+            });
+            
+            // Добавляем полигоны на карту
+            myMap.geoObjects.add(centerPolygon);
+            myMap.geoObjects.add(yubileynyPolygon);
+        }
+
+        // Инициализация диаграммы
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('comfortChart').getContext('2d');
+            const comfortChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Транспорт', 'Экология', 'Социальная инфраструктура', 'Безопасность', 'Культура и досуг', 'Торговая инфраструктура', 'Благоустройство'],
+                    datasets: [{
+                        label: 'Оценка комфорта',
+                        data: [6, 8, 7, 6, 8, 9, 5],
+                        backgroundColor: [
+                            'rgba(243, 156, 18, 0.7)',
+                            'rgba(46, 204, 113, 0.7)',
+                            'rgba(46, 204, 113, 0.7)',
+                            'rgba(243, 156, 18, 0.7)',
+                            'rgba(46, 204, 113, 0.7)',
+                            'rgba(46, 204, 113, 0.7)',
+                            'rgba(255, 107, 107, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(243, 156, 18)',
+                            'rgb(46, 204, 113)',
+                            'rgb(46, 204, 113)',
+                            'rgb(243, 156, 18)',
+                            'rgb(46, 204, 113)',
+                            'rgb(46, 204, 113)',
+                            'rgb(255, 107, 107)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Оценка: ${context.parsed.y}/10`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Переключение темы
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle.querySelector('i');
+            
+            // Проверяем сохраненную тему в localStorage
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                
+                if (document.body.classList.contains('dark-mode')) {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+            
+            // Мобильное меню
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileNav = document.getElementById('mobileNav');
+            const closeMenu = document.getElementById('closeMenu');
+            
+            mobileMenu.addEventListener('click', function() {
+                mobileNav.classList.add('active');
+            });
+            
+            closeMenu.addEventListener('click', function() {
+                mobileNav.classList.remove('active');
+            });
+            
+            // Закрытие мобильного меню при клике на ссылку
+            document.querySelectorAll('.mobile-nav a').forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileNav.classList.remove('active');
+                });
+            });
+            
+            // Навигация по якорям
+            document.querySelectorAll('nav a, .mobile-nav a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    // Закрываем мобильное меню если открыто
+                    mobileNav.classList.remove('active');
+                    
+                    // Обновляем активную ссылку в навигации
+                    document.querySelectorAll('nav a').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // Активная навигация при прокрутке
+            window.addEventListener('scroll', function() {
+                const sections = document.querySelectorAll('section');
+                const navLinks = document.querySelectorAll('nav a');
+                
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+            
+            // Анимация появления элементов при прокрутке
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const appearOnScroll = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(element => {
+                appearOnScroll.observe(element);
+            });
+            
+            // Табы районов
+            const districtTabs = document.querySelectorAll('.district-tab');
+            const districtContents = document.querySelectorAll('.district-content');
+            
+            districtTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const districtId = this.getAttribute('data-district');
+                    
+                    // Убираем активный класс у всех табов и контента
+                    districtTabs.forEach(t => t.classList.remove('active'));
+                    districtContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Добавляем активный класс к текущему табу и контенту
+                    this.classList.add('active');
+                    document.getElementById(districtId).classList.add('active');
+                });
+            });
+            
+            // Опрос
+            const questions = document.querySelectorAll('.question');
+            const options = document.querySelectorAll('.option');
+            const prevBtn = document.getElementById('prevQuestion');
+            const nextBtn = document.getElementById('nextQuestion');
+            const submitBtn = document.getElementById('submitSurvey');
+            const progressBar = document.getElementById('surveyProgress');
+            
+            let currentQuestion = 0;
+            
+            // Обновление прогресса опроса
+            function updateProgress() {
+                const progress = ((currentQuestion + 1) / questions.length) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+            
+            // Показать/скрыть кнопки навигации
+            function updateNavigation() {
+                prevBtn.style.display = currentQuestion === 0 ? 'none' : 'inline-block';
+                nextBtn.style.display = currentQuestion === questions.length - 1 ? 'none' : 'inline-block';
+                submitBtn.style.display = currentQuestion === questions.length - 1 ? 'inline-block' : 'none';
+            }
+            
+            // Переход к вопросу
+            function goToQuestion(index) {
+                questions.forEach(q => q.classList.remove('active'));
+                questions[index].classList.add('active');
+                currentQuestion = index;
+                updateProgress();
+                updateNavigation();
+            }
+            
+            // Обработчики навигации
+            nextBtn.addEventListener('click', function() {
+                if (currentQuestion < questions.length - 1) {
+                    goToQuestion(currentQuestion + 1);
+                }
+            });
+            
+            prevBtn.addEventListener('click', function() {
+                if (currentQuestion > 0) {
+                    goToQuestion(currentQuestion - 1);
+                }
+            });
+            
+            // Выбор варианта ответа
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Снимаем выделение с других вариантов в этой группе
+                    const siblings = Array.from(this.parentNode.children);
+                    siblings.forEach(sibling => sibling.classList.remove('selected'));
+                    
+                    // Выделяем выбранный вариант
+                    this.classList.add('selected');
+                });
+            });
+            
+            // Отправка опроса
+            submitBtn.addEventListener('click', function() {
+                alert('Спасибо за участие в опросе! Ваши ответы помогут улучшить наше исследование.');
+                // Сброс выбора
+                options.forEach(option => option.classList.remove('selected'));
+                goToQuestion(0);
+            });
+            
+            // Инициализация опроса
+            updateProgress();
+            updateNavigation();
+        });
+    </script>
+</body>
+</html>
